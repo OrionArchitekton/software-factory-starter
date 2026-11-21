@@ -63,8 +63,10 @@ def run_invariant_probe() -> dict:
     except ValueError:
         pass
 
-    replay = svc.process_refund("ord_101", 6000, "k_part_1")
-    if not replay.replayed or svc.refunded_total("ord_101") != 6000:
+    replay_svc = RefundService(orders={"ord_101": Order(order_id="ord_101", amount_cents=10000)})
+    replay_svc.process_refund("ord_101", 6000, "k_part_1")
+    replay = replay_svc.process_refund("ord_101", 6000, "k_part_1")
+    if not replay.replayed or replay_svc.refunded_total("ord_101") != 6000:
         findings.append(
             {
                 "severity": "BLOCKING",
